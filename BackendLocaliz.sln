@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalizAPI", "LocalizAPI\LocalizAPI.csproj", "{C5832CBC-2B79-420E-A4C9-5801E14DD61C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{5D5B7834-F8C1-4AB4-BB44-287BDCE22272}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{797F3D04-028C-4029-A9B3-80E94C3BB513}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C5832CBC-2B79-420E-A4C9-5801E14DD61C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5832CBC-2B79-420E-A4C9-5801E14DD61C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5832CBC-2B79-420E-A4C9-5801E14DD61C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5832CBC-2B79-420E-A4C9-5801E14DD61C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D5B7834-F8C1-4AB4-BB44-287BDCE22272}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D5B7834-F8C1-4AB4-BB44-287BDCE22272}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D5B7834-F8C1-4AB4-BB44-287BDCE22272}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D5B7834-F8C1-4AB4-BB44-287BDCE22272}.Release|Any CPU.Build.0 = Release|Any CPU
+		{797F3D04-028C-4029-A9B3-80E94C3BB513}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{797F3D04-028C-4029-A9B3-80E94C3BB513}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{797F3D04-028C-4029-A9B3-80E94C3BB513}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{797F3D04-028C-4029-A9B3-80E94C3BB513}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {18D8C61B-0C35-4F01-AE36-A3F8E7AE2251}
+	EndGlobalSection
+EndGlobal
