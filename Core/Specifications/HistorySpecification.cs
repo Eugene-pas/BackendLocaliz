@@ -18,4 +18,13 @@ public class HistorySpecification
 
     }
 
+    internal class GetByDocumentId : Specification<History>, ISingleResultSpecification<History>
+    {
+        public GetByDocumentId(uint documentId)
+        {
+            Query.Where(h => h.DocumentId == documentId);
+        }
+
+    }
+
 }

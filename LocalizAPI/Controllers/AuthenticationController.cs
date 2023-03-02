@@ -49,11 +49,11 @@ namespace LocalizAPI.Controllers
             return Ok();
         }
 
-        [HttpPost("confirm-email")]
-        public async Task<IActionResult> ConfirmEmailAsync(EmailConfirmationTokenRequestDTO request)
-        {
-            //await _emailService.ConfirmEmailAsync(request);
-            return Ok();
-        }
+        //[HttpPost("confirm-email")]
+        //public async Task<IActionResult> ConfirmEmailAsync(EmailConfirmationTokenRequestDTO request)
+        //{
+        //    //await _emailService.ConfirmEmailAsync(request);
+        //    return Ok();
+        //}
     }
 }

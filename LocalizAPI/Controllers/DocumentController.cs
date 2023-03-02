@@ -24,7 +24,7 @@ public class DocumentController : ControllerBase
 
     [HttpPost("add")]
     [AuthorizeByRole(IdentityRoleNames.User)]
-    public async Task<List<AddByteDocDTO>> AddDocument([Required] uint projectId,[Required] List<IFormFile> documents)
+    public async Task<List<AddByteDocDTO>> AddDocument([Required, FromForm] uint projectId,[FromForm] List<IFormFile> documents)
     {
         return await _documentService.AddDocument(projectId, documents);
     }
@@ -43,4 +43,3 @@ public class DocumentController : ControllerBase
         return await _documentService.GetAllDocuments(projectId);
     }
 
-}

@@ -52,13 +52,17 @@ public class ProjectService : IProjectService
         }
 
         if (await _projectUserRepository.GetBySpecAsync(
-                new ProjectUserSpecification.GetProjectByUserId(user.Id)) == null)
+                new ProjectUserSpecification.GetProjectByUserId(user.Id, projectId)) == null)
         {
             await _projectUserRepository.AddAsync(new ProjectUser()
             {
                 User = user,
                 Project = project
             });
+        }
+        else
+        {
+                throw new HttpException("The user has already been added to the project!", HttpStatusCode.Conflict);
         }
 
 
@@ -81,7 +85,8 @@ public class ProjectService : IProjectService
             Project = newProject
         });
 
-        await _documentService.AddDocument(newProject.Id, project.Documents);
+        if(project.Documents.Count != 0)
+            await _documentService.AddDocument(newProject.Id, project.Documents);
 
         return _mapper.Map<ProjectDTO>(newProject);
     }

@@ -88,7 +88,7 @@ public class DocumentService : IDocumentService
 
         if (document == null)
         {
-            throw new HttpException("Not found document!", HttpStatusCode.BadRequest);
+            throw new HttpException("Not found document!", HttpStatusCode.NotFound);
         }
 
         await _documentRepository.DeleteAsync(document);
@@ -100,7 +100,7 @@ public class DocumentService : IDocumentService
 
         if (project == null)
         {
-            throw new HttpException("Not found project!", HttpStatusCode.BadRequest);
+            throw new HttpException("Not found project!", HttpStatusCode.NotFound);
         }
 
         var documents = await _documentRepository.ListAsync(

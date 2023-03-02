@@ -124,43 +124,43 @@
     <value>Wrong code or this code is deprecated, try again!</value>
   </data>
   <data name="EmailNotConfirm" xml:space="preserve">
-    <value>First you need to confirm your email address</value>
+    <value>First you need to confirm your email address.</value>
   </data>
   <data name="EventNotFound" xml:space="preserve">
-    <value>This Event doesn't found</value>
+    <value>This Event doesn't found.</value>
   </data>
   <data name="IncorrectLoginOrPassword" xml:space="preserve">
-    <value>Incorrect login or password</value>
+    <value>Incorrect login or password.</value>
   </data>
   <data name="InvalidRequest" xml:space="preserve">
-    <value>Invalid request</value>
+    <value>Invalid request.</value>
   </data>
   <data name="InvalidToken" xml:space="preserve">
-    <value>Invalid token</value>
+    <value>Invalid token.</value>
   </data>
   <data name="InvalidTokenVerification" xml:space="preserve">
-    <value>Invalid token verification</value>
+    <value>Invalid token verification.</value>
   </data>
   <data name="PasswordIsExist" xml:space="preserve">
-    <value>Password is already created</value>
+    <value>Password is already created.</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
-    <value>Unknown error has occured</value>
+    <value>Unknown error has occured.</value>
   </data>
   <data name="UserAcceptedInvite" xml:space="preserve">
-    <value>This user already accepted your invite</value>
+    <value>This user already accepted your invite.</value>
   </data>
   <data name="UserAlreadyAssigned" xml:space="preserve">
-    <value>This user has already assigned</value>
+    <value>This user has already assigned.</value>
   </data>
   <data name="UserIdNotFound" xml:space="preserve">
     <value>User id not found!</value>
   </data>
   <data name="UsernameAlreadyExists" xml:space="preserve">
-    <value>User with this username already exist</value>
+    <value>User with this username already exist.</value>
   </data>
   <data name="UserNotFound" xml:space="preserve">
-    <value>User not found</value>
+    <value>User not found!</value>
   </data>
   <data name="WrongResetPasswordCode" xml:space="preserve">
     <value>Wrong code or this code is deprecated, try again!</value>
@@ -175,7 +175,7 @@
     <value>You are not allowed to do this!</value>
   </data>
   <data name="UserCantBeDeleted" xml:space="preserve">
-    <value>User with active offers or trips can`t be deleted</value>
+    <value>User with active offers or trips can`t be deleted.</value>
   </data>
   <data name="RoleNotFound" xml:space="preserve">
     <value>Role not found!</value>

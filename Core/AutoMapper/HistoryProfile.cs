@@ -15,7 +15,7 @@ public class HistoryProfile : Profile
             .ForMember(dest => dest.Id,
                 act => act.Ignore());
         CreateMap<History, HistoryDTO>().ForMember(dest => dest.UserInfo,
-            act => act.MapFrom(src => src.User));
+            act => act.MapFrom(src => src.User)).ReverseMap();
         CreateMap<History, TranslateHistoryDTO>();
     }
 }

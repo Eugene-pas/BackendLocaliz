@@ -35,6 +35,14 @@ public class HistoryService : IHistoryService
 
     public async Task<PaginatedList<HistoryDTO>> GetRange(RangeHistoryDTO history)
     {
+        var checkHistory = await _historyRepository
+            .GetBySpecAsync(new HistorySpecification.GetByDocumentId(history.DocumentId));
+
+        if (checkHistory == null)
+        {
+            await WriteHistory(history.DocumentId);
+        }
+
         var document =
             await _documentRepository.GetBySpecAsync(
                 new DocumentSpecification.GetDocumentWithHistories(history.DocumentId));
@@ -96,11 +104,21 @@ public class HistoryService : IHistoryService
             return _mapper.Map<HistoryDTO>(newHistory);
         }
 
+
+
         return _mapper.Map<HistoryDTO>(history);
     }
 
     public async Task WriteHistory(uint documentId)
     {
+        var history = await _historyRepository
+            .GetBySpecAsync(new HistorySpecification.GetByDocumentId(documentId));
+
+        if (history != null)
+        {
+            throw new HttpException("The translate of history written", HttpStatusCode.BadRequest);
+        }
+
         var document = await _documentRepository.GetByIdAsync(documentId);
 
         if (document == null)
@@ -137,7 +155,8 @@ public class HistoryService : IHistoryService
             {
                 DocumentId = documentId,
                 Text = matches[i].Value,
-                Number = i + 1
+                Number = i + 1,
+                Date = DateTimeOffset.UtcNow
             });
         }
 

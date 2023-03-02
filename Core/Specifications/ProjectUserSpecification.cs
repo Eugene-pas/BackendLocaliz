@@ -17,9 +17,9 @@ public class ProjectUserSpecification
 
     internal class GetProjectByUserId : Specification<ProjectUser>, ISingleResultSpecification<ProjectUser>
     {
-        public GetProjectByUserId(string userId)
+        public GetProjectByUserId(string userId, uint projectId)
         {
-            Query.Where(p => p.UserId == userId);
+            Query.Where(p => p.UserId == userId && p.ProjectId == projectId);
         }
     }
 }

@@ -32,17 +32,10 @@ public class HistoryController : ControllerBase
 
     [HttpPost("translate")]
     [AuthorizeByRole(IdentityRoleNames.User)]
-    public async Task<HistoryDTO> Translate(TranslateHistoryDTO translateHistoryText)
+    public async Task<HistoryDTO> Translate([FromBody] TranslateHistoryDTO translateHistoryText)
     {
         string userId = _userService.GetCurrentUserNameIdentifier(User);
         return await _historyService.Translate(userId, translateHistoryText);
     }
 
-    [HttpPost("write")]
-    [AuthorizeByRole(IdentityRoleNames.User)]
-    public async Task<ActionResult> WriteHistory(uint documentId)
-    {
-        await _historyService.WriteHistory(documentId);
-        return Ok();
-    }
 }

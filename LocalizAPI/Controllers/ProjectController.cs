@@ -26,9 +26,9 @@ public class ProjectController : ControllerBase
 
     [HttpPost("add-user")]
     [AuthorizeByRole(IdentityRoleNames.User)]
-    public async Task<ActionResult<UserInfoDTO>> AddUserToProject(string email, uint projectId)
+    public async Task<ActionResult<UserInfoDTO>> AddUserToProject([FromBody] ProjectAddUserDTO projectUser)
     {
-        return await _projectService.AddUserToProject(email, projectId);
+        return await _projectService.AddUserToProject(projectUser.email, projectUser.projectId);
     }
 
     [HttpPost("create")]
