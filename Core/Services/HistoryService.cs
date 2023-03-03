@@ -149,54 +149,6 @@ public class HistoryService : IHistoryService
         await _historyRepository.AddRangeAsync(histories);
     }
 
-    public async Task<DownloadDTO> DownloadTranslate(uint documentId)
-    {
-        var document =
-            await _documentRepository.GetBySpecAsync(
-                new DocumentSpecification.GetDocumentWithHistories(documentId));
-
-        if (document == null)
-        {
-            throw new HttpException("Not found document", HttpStatusCode.NotFound);
-        }
-
-        if (document.Histories == null)
-        {
-            throw new HttpException("The translate of history written", HttpStatusCode.BadRequest);
-        }
-
-        var dataFile = TransformByteToStaring(document.Data);
-
-        string translateHistory = ReplaceHistory(dataFile, document.Histories.ToArray());
-
-        byte[] bytes = Encoding.UTF8.GetBytes(translateHistory);
-
-        return new DownloadDTO()
-        {
-            Bytes = bytes,
-            NameFile = document.Name
-        };
-    }
-
-    private string ReplaceHistory(string dataFile, History[] histories, int index = 0)
-    {
-        if (index < histories.Length)
-            return dataFile;
-
-        var history = histories[index];
-
-        if (history.TranslateText == null)
-            ReplaceHistory(dataFile, histories, ++index);
-        
-
-        dataFile = Regex.Replace(dataFile, history.Text, history.TranslateText);
-
-        if (index < histories.Length)
-            ReplaceHistory(dataFile, histories, ++index);
-
-        return dataFile;
-    }
-
     private string TransformByteToStaring(byte[] data)
     {
         return Encoding.UTF8.GetString(data);

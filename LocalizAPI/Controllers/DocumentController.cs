@@ -3,6 +3,7 @@ using Core.Constants;
 using Core.DTO.DocumentDTO;
 using Core.Helpers;
 using Core.Interfaces.CustomService;
+using Core.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -41,6 +42,14 @@ public class DocumentController : ControllerBase
     public async Task<List<DocumentDTO>> GetAllDocuments(uint projectId)
     {
         return await _documentService.GetAllDocuments(projectId);
+    }
+
+    [HttpGet("download")]
+    [AuthorizeByRole(IdentityRoleNames.User)]
+    public async Task<IActionResult> Download([FromQuery] uint documentId)
+    {
+        var file = await _documentService.DownloadTranslate(documentId);
+        return File(file.Bytes, file.ContentType, file.NameFile);
     }
 }
 

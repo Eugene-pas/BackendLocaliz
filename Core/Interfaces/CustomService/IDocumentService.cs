@@ -8,4 +8,5 @@ public interface IDocumentService
     Task<List<AddByteDocDTO>> AddDocument(uint projectId, List<IFormFile> documents);
     Task<List<DocumentDTO>> GetAllDocuments(uint projectId);
     Task DeleteDocument(uint documentId);
+    Task<DownloadDTO> DownloadTranslate(uint documentId);
 }
