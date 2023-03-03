@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.IO.Pipelines;
 using Core.Constants;
 using Core.DTO.DocumentDTO;
 using Core.Helpers;
@@ -7,7 +6,6 @@ using Core.Interfaces.CustomService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.RegularExpressions;
 
 namespace LocalizAPI.Controllers;
 
@@ -17,6 +15,7 @@ namespace LocalizAPI.Controllers;
 public class DocumentController : ControllerBase
 {
     private readonly IDocumentService _documentService;
+
     public DocumentController(IDocumentService documentService)
     {
         _documentService = documentService;
@@ -24,7 +23,8 @@ public class DocumentController : ControllerBase
 
     [HttpPost("add")]
     [AuthorizeByRole(IdentityRoleNames.User)]
-    public async Task<List<AddByteDocDTO>> AddDocument([Required, FromForm] uint projectId,[FromForm] List<IFormFile> documents)
+    public async Task<List<AddByteDocDTO>> AddDocument([Required, FromForm] uint projectId,
+        [FromForm] List<IFormFile> documents)
     {
         return await _documentService.AddDocument(projectId, documents);
     }
@@ -42,4 +42,5 @@ public class DocumentController : ControllerBase
     {
         return await _documentService.GetAllDocuments(projectId);
     }
+}
 

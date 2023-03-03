@@ -11,6 +11,7 @@ using Core.Interfaces.CustomService;
 using Core.Specifications;
 using Microsoft.AspNetCore.Identity;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Core.Services;
@@ -79,7 +80,7 @@ public class HistoryService : IHistoryService
         {
             history.Version =
                 new string[] { "Beta", "Gama", "Delta", "Otta", "Sigma", "Magma" }[Random.Shared.NextInt64(0, 5)] +
-                $".v{Random.Shared.NextInt64(0, 10)}";
+                $".v{Random.Shared.NextInt64(1, 10)}";
         }
         else
         {
@@ -109,7 +110,7 @@ public class HistoryService : IHistoryService
         return _mapper.Map<HistoryDTO>(history);
     }
 
-    public async Task WriteHistory(uint documentId)
+    private async Task WriteHistory(uint documentId)
     {
         var history = await _historyRepository
             .GetBySpecAsync(new HistorySpecification.GetByDocumentId(documentId));
@@ -128,22 +129,7 @@ public class HistoryService : IHistoryService
 
         List<History> histories = new List<History>();
 
-
-        var filePath = Path.GetTempFileName();
-        string text = "";
-
-        using (var fs = System.IO.File.Create(filePath))
-        {
-            await fs.WriteAsync(document.Data);
-        }
-
-        using (var stream = new StreamReader(filePath))
-        {
-            text = await stream.ReadToEndAsync();
-
-        }
-
-        File.Delete(filePath);
+        string text = TransformByteToStaring(document.Data);
 
         Regex regex = new Regex(@"([""'])(?:(?=(\\?))\2.)*?\1(.|\n)");
 
@@ -161,5 +147,58 @@ public class HistoryService : IHistoryService
         }
 
         await _historyRepository.AddRangeAsync(histories);
+    }
+
+    public async Task<DownloadDTO> DownloadTranslate(uint documentId)
+    {
+        var document =
+            await _documentRepository.GetBySpecAsync(
+                new DocumentSpecification.GetDocumentWithHistories(documentId));
+
+        if (document == null)
+        {
+            throw new HttpException("Not found document", HttpStatusCode.NotFound);
+        }
+
+        if (document.Histories == null)
+        {
+            throw new HttpException("The translate of history written", HttpStatusCode.BadRequest);
+        }
+
+        var dataFile = TransformByteToStaring(document.Data);
+
+        string translateHistory = ReplaceHistory(dataFile, document.Histories.ToArray());
+
+        byte[] bytes = Encoding.UTF8.GetBytes(translateHistory);
+
+        return new DownloadDTO()
+        {
+            Bytes = bytes,
+            NameFile = document.Name
+        };
+    }
+
+    private string ReplaceHistory(string dataFile, History[] histories, int index = 0)
+    {
+        if (index < histories.Length)
+            return dataFile;
+
+        var history = histories[index];
+
+        if (history.TranslateText == null)
+            ReplaceHistory(dataFile, histories, ++index);
+        
+
+        dataFile = Regex.Replace(dataFile, history.Text, history.TranslateText);
+
+        if (index < histories.Length)
+            ReplaceHistory(dataFile, histories, ++index);
+
+        return dataFile;
+    }
+
+    private string TransformByteToStaring(byte[] data)
+    {
+        return Encoding.UTF8.GetString(data);
     }
 }

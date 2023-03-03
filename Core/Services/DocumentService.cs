@@ -54,19 +54,13 @@ public class DocumentService : IDocumentService
         {
             if (document.Length > 0)
             {
-                var documentPath = Path.GetTempFileName();
-
-                using (var stream = System.IO.File.Create(documentPath))
+                using (var st = document.OpenReadStream())
                 {
-                    await document.CopyToAsync(stream);
-
-                    var st = document.OpenReadStream();
                     using (var br = new BinaryReader(st))
                     {
-                        bytes = br.ReadBytes((int)stream.Length);
+                        bytes = br.ReadBytes((int)st.Length);
                     }
                 }
-                System.IO.File.Delete(documentPath);
             }
             newDocuments.Add(new AddByteDocDTO()
             {

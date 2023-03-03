@@ -38,4 +38,11 @@ public class HistoryController : ControllerBase
         return await _historyService.Translate(userId, translateHistoryText);
     }
 
+    [HttpGet("download")]
+    [AuthorizeByRole(IdentityRoleNames.User)]
+    public async Task<IActionResult> Download([FromQuery] uint documentId)
+    {
+        var file = await _historyService.DownloadTranslate(documentId);
+        return File(file.Bytes, file.ContentType, file.NameFile);
+    }
 }
