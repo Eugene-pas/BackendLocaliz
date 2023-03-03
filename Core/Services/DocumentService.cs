@@ -124,34 +124,21 @@ public class DocumentService : IDocumentService
 
         var dataFile = TransformByteToStaring(document.Data);
 
-        string translateHistory = ReplaceHistory(dataFile, document.Histories.ToArray());
+        foreach (var history in document.Histories)
+        {
+            if (history.TranslateText == null)
+                continue;
 
-        byte[] bytes = Encoding.UTF8.GetBytes(translateHistory);
+            dataFile = Regex.Replace(dataFile, history.Text, history.TranslateText);
+        }
+
+        byte[] bytes = Encoding.UTF8.GetBytes(dataFile);
 
         return new DownloadDTO()
         {
             Bytes = bytes,
             NameFile = document.Name
         };
-    }
-
-    private string ReplaceHistory(string dataFile, History[] histories, int index = 0)
-    {
-        if (index < histories.Length)
-            return dataFile;
-
-        var history = histories[index];
-
-        if (history.TranslateText == null)
-            ReplaceHistory(dataFile, histories, ++index);
-
-
-        dataFile = Regex.Replace(dataFile, history.Text, history.TranslateText);
-
-        if (index < histories.Length)
-            ReplaceHistory(dataFile, histories, ++index);
-
-        return dataFile;
     }
 
     private string TransformByteToStaring(byte[] data)
