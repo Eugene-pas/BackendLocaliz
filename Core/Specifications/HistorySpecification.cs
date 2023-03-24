@@ -1,5 +1,6 @@
 ﻿using Ardalis.Specification;
 using Core.DTO;
+using Core.DTO.HistoryDTO;
 using Core.Entities.HistoryEntity;
 
 namespace Core.Specifications;

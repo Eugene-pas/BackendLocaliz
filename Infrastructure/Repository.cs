@@ -1,4 +1,5 @@
-﻿using Ardalis.Specification.EntityFrameworkCore;
+﻿using System.Collections.Immutable;
+using Ardalis.Specification.EntityFrameworkCore;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

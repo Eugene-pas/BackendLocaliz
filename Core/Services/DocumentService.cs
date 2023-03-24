@@ -21,17 +21,20 @@ public class DocumentService : IDocumentService
 {
     private readonly IRepository<Project> _projectRepository;
     private readonly IRepository<Document> _documentRepository;
+    private readonly IRepository<History> _histotyRepository;
     private readonly UserManager<User> _userManager;
     private readonly IMapper _mapper;
     public DocumentService(
-        IRepository<Document> documentRepository, 
+        IRepository<Document> documentRepository,
         UserManager<User> userManager,
         IRepository<Project> projectRepository,
+        IRepository<History> histotyRepository,
         IMapper mapper)
     {
         _documentRepository = documentRepository;
         _userManager = userManager;
         _projectRepository = projectRepository;
+        _histotyRepository = histotyRepository;
         _mapper = mapper;
     }
     public async Task<List<AddByteDocDTO>> AddDocument(uint projectId, List<IFormFile> documents)
@@ -87,6 +90,26 @@ public class DocumentService : IDocumentService
         {
             throw new HttpException("Not found document!", HttpStatusCode.NotFound);
         }
+
+        var histories = await _histotyRepository.ListAsync(
+            new HistorySpecification.GetByDocumentId(documentId));
+        var deleteHistory = new List<History>();
+
+        if (histories.Count != 0)
+            foreach (var history in histories)
+            {
+                history.DocumentId = null;
+                history.Document = null;
+                if (history.TranslateText == null ||
+                    history.TranslateText == "")
+                {
+                    deleteHistory.Add(history);
+                }
+            }
+
+        await _histotyRepository.UpdateRangeAsync(histories);
+
+        await _histotyRepository.DeleteRangeAsync(deleteHistory);
 
         await _documentRepository.DeleteAsync(document);
     }

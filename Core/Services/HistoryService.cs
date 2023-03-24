@@ -36,28 +36,29 @@ public class HistoryService : IHistoryService
 
     public async Task<PaginatedList<HistoryDTO>> GetRange(RangeHistoryDTO history)
     {
-        var checkHistory = await _historyRepository
-            .GetBySpecAsync(new HistorySpecification.GetByDocumentId(history.DocumentId));
+        var histories = await _historyRepository.ListAsync(
+            new HistorySpecification.GetRange(history.DocumentId, history.PaginationFilter));
 
-        if (checkHistory == null)
+        if (histories.Count == 0)
         {
             await WriteHistory(history.DocumentId);
         }
 
         var document =
-            await _documentRepository.GetBySpecAsync(
-                new DocumentSpecification.GetDocumentWithHistories(history.DocumentId));
+            await _documentRepository.GetByIdAsync(history.DocumentId);
+
+
 
         if (document == null)
         {
             throw new HttpException("Document not found!", HttpStatusCode.NotFound);
         }
 
-        int historyCount = document.Histories.Count;
-        int totalPages = PaginatedList<HistoryDTO>.GetTotalPages(history.PaginationFilter, historyCount);
+        int historyCount = await _historyRepository
+            .CountAsync(new HistorySpecification.GetByDocumentId(history.DocumentId));
 
-        var histories = await _historyRepository.ListAsync(
-            new HistorySpecification.GetRange(history.DocumentId, history.PaginationFilter));
+        int totalPages = PaginatedList<HistoryDTO>
+            .GetTotalPages(history.PaginationFilter, historyCount);
 
         return PaginatedList<HistoryDTO>.Evaluate(
             _mapper.Map<List<HistoryDTO>>(histories), history.PaginationFilter.PageNumber, historyCount, totalPages);
@@ -87,23 +88,24 @@ public class HistoryService : IHistoryService
             history.Version = translateHistoryText.Version;
         }
 
-        if (history.TranslateText == null)
-        {
-            history.TranslateText = translateHistoryText.TranslateText;
-            history.UserId = userId;
-            history.Date = DateTimeOffset.UtcNow;
-            await _historyRepository.UpdateAsync(history);
-        }
-        else
-        {
-            var newHistory = _mapper.Map<History>(history);
-            newHistory.TranslateText = translateHistoryText.TranslateText;
-            newHistory.UserId = userId;
-            newHistory.Date = DateTimeOffset.UtcNow;
-            await _historyRepository.AddAsync(newHistory);
 
-            return _mapper.Map<HistoryDTO>(newHistory);
-        }
+        history.TranslateText = translateHistoryText.TranslateText;
+        history.UserId = userId;
+        history.Date = DateTimeOffset.UtcNow;
+        await _historyRepository.UpdateAsync(history);
+
+        // Create new history when TranslateText is equal to existing value
+        //
+        //else
+        //{
+        //    var newHistory = _mapper.Map<History>(history);
+        //    newHistory.TranslateText = translateHistoryText.TranslateText;
+        //    newHistory.UserId = userId;
+        //    newHistory.Date = DateTimeOffset.UtcNow;
+        //    await _historyRepository.AddAsync(newHistory);
+
+        //    return _mapper.Map<HistoryDTO>(newHistory);
+        //}
 
 
 
