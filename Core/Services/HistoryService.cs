@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Identity;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using Core.Interfaces.APIService;
+using Microsoft.AspNetCore.Server.IIS.Core;
 
 namespace Core.Services;
 
@@ -20,17 +22,20 @@ public class HistoryService : IHistoryService
 {
     private readonly IRepository<History> _historyRepository;
     private readonly IRepository<Document> _documentRepository;
+    private readonly ITranslationService _translationService;
     private readonly UserManager<User> _userManager;
     private readonly IMapper _mapper;
     public HistoryService(
         UserManager<User> userManager,
         IRepository<History> historyRepository,
         IRepository<Document> documentRepository,
+        ITranslationService translationService,
         IMapper mapper)
     {
         _userManager = userManager;
         _historyRepository = historyRepository;
         _documentRepository = documentRepository;
+        _translationService = translationService;
         _mapper = mapper;
     }
 
@@ -149,6 +154,65 @@ public class HistoryService : IHistoryService
         }
 
         await _historyRepository.AddRangeAsync(histories);
+    }
+
+    public async Task TranslateAllJsonDoc(uint documentId, string from, string to)
+    {
+        var document = await _documentRepository
+            .GetBySpecAsync(new DocumentSpecification.GetDocumentWithHistories(documentId));
+
+        if (document == null)
+        {
+            throw new HttpException("Not found document", HttpStatusCode.NotFound);
+        }
+
+        var histories = document.Histories.ToArray();
+
+        StringBuilder textForTranslation = new StringBuilder();
+        List<string> textlist = new List<string>();
+
+        for (int i = 0; i < histories.Length; i++)
+        {
+            if (histories[i].Text.Length > 1000)
+            {
+                throw new HttpException("One value in your variable is longer than 1000 characters!",
+                    HttpStatusCode.BadRequest);
+            }
+
+            if(i != 0)
+                textForTranslation.Append('|');
+
+            textForTranslation.Append(histories[i].Text);
+
+            if(textForTranslation.Length / 1000f >= 1 )
+            {
+                textlist.Add(
+                    await _translationService
+                    .SearchTranslation(textForTranslation.ToString(), from, to)
+                    );
+                textForTranslation.Clear();
+            }
+        }
+
+        textlist.Add(
+            await _translationService
+            .SearchTranslation(textForTranslation.ToString(), from, to)
+            );
+        textForTranslation.Clear();
+
+        int iter = 0;
+        foreach (var text in textlist)
+        {
+            var translateText = text.Split('|');
+            for (int i = 0; i < translateText.Length; i++)
+            {
+                histories[iter].TranslateText = translateText[i];
+                histories[iter].Date = DateTimeOffset.UtcNow;
+                iter++;
+            }
+        }
+
+        await _historyRepository.UpdateRangeAsync(histories);
     }
 
     private string TransformByteToStaring(byte[] data)

@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Core.AutoMapper;
 using Core.Helpers;
+using Core.Interfaces.APIService;
 using Core.Interfaces.CustomService;
 using Core.Services;
+using Core.Services.AdditionalAPI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 
@@ -36,11 +38,17 @@ namespace Core
         public static void ConfigJwtOptions(this IServiceCollection services, IConfiguration config)
         {
             services.Configure<JwtOptions>(config.GetSection("JwtOptions"));
+            services.Configure<TranslationMemory>(config.GetSection("TranslationMemory"));
         }
 
         public static void Configures(this IServiceCollection services, IConfiguration config)
         {
             services.Configure<AppSettings>(config);
+        }
+
+        public static void AddHttpClients(this IServiceCollection services)
+        {
+            services.AddHttpClient<ITranslationService, TranslationService>();
         }
     }
 }

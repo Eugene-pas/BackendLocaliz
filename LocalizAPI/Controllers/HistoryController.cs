@@ -1,6 +1,8 @@
 ﻿using Core.Constants;
+using Core.DTO.APIDTO;
 using Core.DTO.HistoryDTO;
 using Core.Helpers;
+using Core.Interfaces.APIService;
 using Core.Interfaces.CustomService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -15,12 +17,15 @@ public class HistoryController : ControllerBase
 {
     private readonly IUserService _userService;
     private readonly IHistoryService _historyService;
+    private readonly ITranslationService _translationService;
     public HistoryController(
         IHistoryService historyService,
-        IUserService userService)
+        IUserService userService,
+        ITranslationService translationService)
     {
         _historyService = historyService;
         _userService = userService;
+        _translationService = translationService;
     }
 
     [HttpGet("get-range")]
@@ -36,5 +41,17 @@ public class HistoryController : ControllerBase
     {
         string userId = _userService.GetCurrentUserNameIdentifier(User);
         return await _historyService.Translate(userId, translateHistoryText);
+    }
+
+    [HttpPost("translate-document")]
+    [AuthorizeByRole(IdentityRoleNames.User)]
+    public async Task<ActionResult> TranslateAPI([FromBody] TranslationAPIDTO translationApiDto)
+    {
+        await _historyService.TranslateAllJsonDoc(
+            translationApiDto.DocumentId,
+            translationApiDto.From,
+            translationApiDto.To
+            );
+        return Ok();
     }
 }

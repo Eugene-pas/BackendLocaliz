@@ -21,6 +21,7 @@ builder.Services.AddCustomServices();
 builder.Services.AddAutoMapper();
 builder.Services.ConfigJwtOptions(builder.Configuration);
 builder.Services.Configures(builder.Configuration);
+builder.Services.AddHttpClients();
 
 // Infrastructure services extensione
 builder.Services.AddDbContext(builder.Configuration.GetConnectionString("DefaultConnection"));
