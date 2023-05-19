@@ -19,7 +19,7 @@ public class DocumentSpecification
         public GetDocumentWithHistories(uint documentId)
         {
             Query.Where(p => p.Id == documentId)
-                .Include(d => d.Histories);
+                .Include(d => d.Contents);
         }
     }
 }

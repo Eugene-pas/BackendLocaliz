@@ -1,4 +1,5 @@
-﻿using Core.Entities.DocumentEntity;
+﻿using Core.Entities.ContentEntity;
+using Core.Entities.DocumentEntity;
 using Core.Entities.HistoryEntity;
 using Core.Entities.ProjectEntity;
 using Core.Entities.ProjectUserEntity;
@@ -19,6 +20,7 @@ namespace Infrastructure.Data
         public DbSet<Project> Project { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<ProjectUser> ProjectUser { get; set; }
+        public DbSet<Content> Content { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -29,6 +31,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new ProjectConfiguration());
             builder.ApplyConfiguration(new RefreshTokenConfiguration());
             builder.ApplyConfiguration(new ProjectUserConfiguration());
+            builder.ApplyConfiguration(new ContentConfiguration());
             builder.Seed();
             base.OnModelCreating(builder);
         }

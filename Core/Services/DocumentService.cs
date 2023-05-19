@@ -3,8 +3,8 @@ using System.Text.RegularExpressions;
 using System.Text;
 using AutoMapper;
 using Core.DTO.DocumentDTO;
+using Core.Entities.ContentEntity;
 using Core.Entities.DocumentEntity;
-using Core.Entities.HistoryEntity;
 using Core.Entities.ProjectEntity;
 using Core.Entities.UserEntity;
 using Core.Exceptions;
@@ -21,20 +21,20 @@ public class DocumentService : IDocumentService
 {
     private readonly IRepository<Project> _projectRepository;
     private readonly IRepository<Document> _documentRepository;
-    private readonly IRepository<History> _histotyRepository;
+    private readonly IRepository<Content> _contentRepository;
     private readonly UserManager<User> _userManager;
     private readonly IMapper _mapper;
     public DocumentService(
         IRepository<Document> documentRepository,
         UserManager<User> userManager,
         IRepository<Project> projectRepository,
-        IRepository<History> histotyRepository,
+        IRepository<Content> contentRepository,
         IMapper mapper)
     {
         _documentRepository = documentRepository;
         _userManager = userManager;
         _projectRepository = projectRepository;
-        _histotyRepository = histotyRepository;
+        _contentRepository = contentRepository;
         _mapper = mapper;
     }
     public async Task<List<AddByteDocDTO>> AddDocument(uint projectId, List<IFormFile> documents)
@@ -91,25 +91,25 @@ public class DocumentService : IDocumentService
             throw new HttpException("Not found document!", HttpStatusCode.NotFound);
         }
 
-        var histories = await _histotyRepository.ListAsync(
-            new HistorySpecification.GetByDocumentId(documentId));
-        var deleteHistory = new List<History>();
+        var contents = await _contentRepository.ListAsync(
+            new ContentSpecification.GetByDocumentId(documentId));
+        var deleteHistory = new List<Content>();
 
-        if (histories.Count != 0)
-            foreach (var history in histories)
+        if (contents.Count != 0)
+            foreach (var content in contents)
             {
-                history.DocumentId = null;
-                history.Document = null;
-                if (history.TranslateText == null ||
-                    history.TranslateText == "")
+                content.DocumentId = null;
+                content.Document = null;
+                if (content.TranslateText == null ||
+                    content.TranslateText == "")
                 {
-                    deleteHistory.Add(history);
+                    deleteHistory.Add(content);
                 }
             }
 
-        await _histotyRepository.UpdateRangeAsync(histories);
+        await _contentRepository.UpdateRangeAsync(contents);
 
-        await _histotyRepository.DeleteRangeAsync(deleteHistory);
+        await _contentRepository.DeleteRangeAsync(deleteHistory);
 
         await _documentRepository.DeleteAsync(document);
     }
@@ -140,14 +140,14 @@ public class DocumentService : IDocumentService
             throw new HttpException("Not found document", HttpStatusCode.NotFound);
         }
 
-        if (document.Histories == null)
+        if (document.Contents == null)
         {
             throw new HttpException("The translate of history written", HttpStatusCode.BadRequest);
         }
 
         var dataFile = TransformByteToStaring(document.Data);
 
-        foreach (var history in document.Histories)
+        foreach (var history in document.Contents)
         {
             if (history.TranslateText == null)
                 continue;

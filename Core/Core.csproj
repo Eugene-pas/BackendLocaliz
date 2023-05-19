@@ -24,7 +24,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="DTO\HistoryDTO\" />
     <Folder Include="Entities\HistoryEntity\" />
+    <Folder Include="Entities\ContentEntity\" />
     <Folder Include="Entities\ProjectEntity\" />
   </ItemGroup>
 

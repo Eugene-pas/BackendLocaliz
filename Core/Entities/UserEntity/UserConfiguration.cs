@@ -18,6 +18,11 @@ namespace Core.Entities.UserEntity
                 .HasForeignKey(p => p.UserId);
 
             builder
+                .HasMany(p => p.Contents)
+                .WithOne(p => p.User)
+                .HasForeignKey(p => p.UserId);
+
+            builder
                 .HasMany(p => p.RefreshTokens)
                 .WithOne(p => p.User)
                 .HasForeignKey(p => p.UserId);

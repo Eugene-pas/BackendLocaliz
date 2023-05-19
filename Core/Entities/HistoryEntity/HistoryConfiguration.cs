@@ -8,7 +8,7 @@ public class HistoryConfiguration : IEntityTypeConfiguration<History>
     public void Configure(EntityTypeBuilder<History> builder)
     {
         builder
-            .Property(p => p.Text)
+            .Property(p => p.TranslateText)
             .IsRequired();
 
         builder
@@ -16,21 +16,14 @@ public class HistoryConfiguration : IEntityTypeConfiguration<History>
             .IsRequired();
 
         builder
-            .Property(p => p.Number)
-            .IsRequired();
-
-        builder.Property(p => p.DocumentId)
-            .IsRequired(false);
-
-        builder
             .HasOne(p => p.User)
             .WithMany(p => p.Histories)
             .HasForeignKey(p => p.UserId);
 
         builder
-            .HasOne(p => p.Document)
+            .HasOne(p => p.Content)
             .WithMany(p => p.Histories)
-            .HasForeignKey(p => p.DocumentId)
+            .HasForeignKey(p => p.ContentId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
