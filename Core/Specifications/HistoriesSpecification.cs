@@ -1,17 +1,17 @@
 ﻿using Ardalis.Specification;
 using Core.DTO;
-using Core.DTO.HistoryDTO;
+using Core.Entities.ContentEntity;
 using Core.Entities.HistoryEntity;
 
 namespace Core.Specifications;
 
-public class HistorySpecification
+public class HistoriesSpecification
 {
     internal class GetRange : Specification<History>
     {
-        public GetRange(uint documentId, PaginationFilterDTO paginationFilter)
+        public GetRange(uint contentId, PaginationFilterDTO paginationFilter)
         {
-            Query.Where(h => h.DocumentId == documentId)
+            Query.Where(h => h.ContentId == contentId)
                 .Include(h => h.User)
                 .Skip((paginationFilter.PageNumber - 1) * paginationFilter.PageSize)
                 .Take(paginationFilter.PageSize);
@@ -19,11 +19,11 @@ public class HistorySpecification
 
     }
 
-    internal class GetByDocumentId : Specification<History>, ISingleResultSpecification<History>
+    internal class GetByContentId : Specification<History>, ISingleResultSpecification<History>
     {
-        public GetByDocumentId(uint documentId)
+        public GetByContentId(uint contentId)
         {
-            Query.Where(h => h.DocumentId == documentId);
+            Query.Where(h => h.ContentId == contentId);
         }
 
     }

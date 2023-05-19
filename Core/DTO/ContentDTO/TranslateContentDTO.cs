@@ -1,6 +1,6 @@
-﻿namespace Core.DTO.HistoryDTO;
+﻿namespace Core.DTO.ContentDTO;
 
-public class TranslateHistoryDTO
+public class TranslateContentDTO
 {
     public uint Id { get; set; }
     public uint DocumentId { get; set; }

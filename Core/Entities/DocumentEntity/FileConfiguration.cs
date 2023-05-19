@@ -23,7 +23,7 @@ public class FileConfiguration : IEntityTypeConfiguration<Document>
             .HasForeignKey(p => p.ProjectId);
 
         builder
-            .HasMany(p => p.Histories)
+            .HasMany(p => p.Contents)
             .WithOne(p => p.Document)
             .HasForeignKey(p => p.DocumentId)
             .OnDelete(DeleteBehavior.Restrict);

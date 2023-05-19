@@ -20,6 +20,7 @@ namespace Core
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IDocumentService, DocumentService>();
             services.AddScoped<IHistoryService, HistoryService>();
+            services.AddScoped<IContentService, ContentService>();
         }
 
         public static void AddAutoMapper(this IServiceCollection services)
@@ -29,6 +30,7 @@ namespace Core
                 mc.AddProfile(new UserProfiles());
                 mc.AddProfile(new ProjectProfile());
                 mc.AddProfile(new DocumentProfile());
+                mc.AddProfile(new ContentProfile());
                 mc.AddProfile(new HistoryProfile());
             });
             var mapper = configures.CreateMapper();

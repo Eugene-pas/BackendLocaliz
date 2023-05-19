@@ -1,4 +1,5 @@
-﻿using Core.Entities.HistoryEntity;
+﻿using Core.Entities.ContentEntity;
+using Core.Entities.HistoryEntity;
 using Core.Entities.ProjectUserEntity;
 using Core.Entities.RefreshTokenEntity;
 using Microsoft.AspNetCore.Identity;
@@ -13,7 +14,9 @@ namespace Core.Entities.UserEntity
         public DateTimeOffset? ConfirmationEmailTokenExpirationDate { get; set; }
         public DateTimeOffset RegistrationDate { get; set; } = DateTimeOffset.UtcNow;
         public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
-        public ICollection<ProjectUser> ProjectUser { get; set; }
-        public ICollection<History> Histories { get; set; }
+        public ICollection<ProjectUser>? ProjectUser { get; set; }
+        public ICollection<History>? Histories { get; set; }
+        public ICollection<Content>? Contents { get; set; }
+
     }
 }
