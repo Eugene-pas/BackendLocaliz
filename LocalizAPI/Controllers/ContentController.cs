@@ -17,15 +17,12 @@ public class ContentController : ControllerBase
 {
     private readonly IUserService _userService;
     private readonly IContentService _contentService;
-    private readonly ITranslationService _translationService;
     public ContentController(
         IContentService contentService,
-        IUserService userService,
-        ITranslationService translationService)
+        IUserService userService)
     {
         _contentService = contentService;
         _userService = userService;
-        _translationService = translationService;
     }
 
     [HttpGet("get-range")]
@@ -47,10 +44,12 @@ public class ContentController : ControllerBase
     [AuthorizeByRole(IdentityRoleNames.User)]
     public async Task<ActionResult> TranslateAPI([FromBody] TranslationAPIDTO translationApiDto)
     {
+        string userId = _userService.GetCurrentUserNameIdentifier(User);
         await _contentService.TranslateAllJsonDoc(
             translationApiDto.DocumentId,
             translationApiDto.From,
-            translationApiDto.To
+            translationApiDto.To,
+            userId
             );
         return Ok();
     }

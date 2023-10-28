@@ -23,6 +23,7 @@ public class ContentService : IContentService
     private readonly IRepository<Content> _contentRepository;
     private readonly IRepository<Document> _documentRepository;
     private readonly ITranslationService _translationService;
+    private readonly IHistoryService _historyService;
     private readonly UserManager<User> _userManager;
     private readonly IMapper _mapper;
     public ContentService(
@@ -31,6 +32,7 @@ public class ContentService : IContentService
         IRepository<Document> documentRepository,
         ITranslationService translationService,
         IRepository<History> historyRepository,
+        IHistoryService historyService,
         IMapper mapper)
     {
         _historyRepository = historyRepository;
@@ -38,6 +40,7 @@ public class ContentService : IContentService
         _contentRepository = contentRepository;
         _documentRepository = documentRepository;
         _translationService = translationService;
+        _historyService = historyService;
         _mapper = mapper;
     }
 
@@ -99,14 +102,7 @@ public class ContentService : IContentService
         content.UserId = userId;
         content.Date = DateTimeOffset.UtcNow;
 
-        await _historyRepository.AddAsync(new History()
-        {
-            TranslateText = content.TranslateText,
-            Date = content.Date,
-            Version = content.Version,
-            Content = content,
-            User = user
-        });
+        await _historyService.WriteHistory(content, user);
 
         await _contentRepository.UpdateAsync(content);
 
@@ -122,7 +118,6 @@ public class ContentService : IContentService
         {
             throw new HttpException("The translate of history written", HttpStatusCode.BadRequest);
         }
-
         var document = await _documentRepository.GetByIdAsync(documentId);
 
         if (document == null)
@@ -152,8 +147,12 @@ public class ContentService : IContentService
         await _contentRepository.AddRangeAsync(contents);
     }
 
-    public async Task TranslateAllJsonDoc(uint documentId, string from, string to)
+    public async Task TranslateAllJsonDoc(uint documentId, string from, string to, string userId)
     {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        ExceptionMethods.UserNullCheck(user);
+
         var document = await _documentRepository
             .GetBySpecAsync(new DocumentSpecification.GetDocumentWithHistories(documentId));
 
@@ -207,6 +206,8 @@ public class ContentService : IContentService
                 iter++;
             }
         }
+
+        await _historyService.WriteHistory(contents, user);
 
         await _contentRepository.UpdateRangeAsync(contents);
     }

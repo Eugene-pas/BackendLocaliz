@@ -26,4 +26,13 @@ public class ContentSpecification
         }
 
     }
+
+    internal class GetCountNotTranslateByDocumentId : Specification<Content>, ISingleResultSpecification<Content>
+    {
+        public GetCountNotTranslateByDocumentId(uint documentId)
+        {
+            Query.Where(h => h.DocumentId == documentId && h.TranslateText != null);
+        }
+
+    }
 }

@@ -1,14 +1,15 @@
 ﻿using AutoMapper;
+using Core.DTO.ContentDTO;
+using Core.DTO.HistoryDTO;
+using Core.Entities.ContentEntity;
 using Core.Entities.HistoryEntity;
+using Core.Entities.UserEntity;
+using Core.Exceptions;
 using Core.Helpers;
 using Core.Interfaces;
 using Core.Interfaces.CustomService;
-using Core.DTO.HistoryDTO;
-using Core.DTO.ContentDTO;
-using Core.Exceptions;
 using Core.Specifications;
 using System.Net;
-using Core.Entities.ContentEntity;
 
 namespace Core.Services;
 
@@ -48,5 +49,36 @@ public class HistoryService : IHistoryService
 
         return PaginatedList<HistoryDTO>.Evaluate(
             _mapper.Map<List<HistoryDTO>>(histories), history.PaginationFilter.PageNumber, historyCount, totalPages);
+    }
+
+    public async Task WriteHistory(IList<Content> content, User user)
+    {
+        IList<History> histories = new List<History>();
+
+        foreach (var item in content)
+        {
+            histories.Add(new History()
+            {
+                TranslateText = item.TranslateText,
+                Date = item.Date,
+                Version = item.Version,
+                Content = item,
+                User = user
+            });
+        }
+
+        await _historyRepository.AddRangeAsync(histories);
+    }
+
+    public async Task WriteHistory(Content content, User user)
+    {
+        await _historyRepository.AddAsync(new History()
+        {
+            TranslateText = content.TranslateText,
+            Date = content.Date,
+            Version = content.Version,
+            Content = content,
+            User = user
+        });
     }
 }

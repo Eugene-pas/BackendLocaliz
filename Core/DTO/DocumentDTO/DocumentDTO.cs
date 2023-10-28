@@ -7,4 +7,5 @@ public class DocumentDTO
     public string Name { get; set; }
     public DateTimeOffset CreationDate { get; set; }
     public string? Description { get; set; }
+    public int TranslationProgress { get; set; }
 }

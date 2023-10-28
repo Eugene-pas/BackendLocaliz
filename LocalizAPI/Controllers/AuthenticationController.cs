@@ -23,8 +23,7 @@ namespace LocalizAPI.Controllers
         [HttpPost("register")]
         public async Task<ActionResult> Register([FromBody] UserRegistrationDTO data)
         {
-            var callbackUrl = Request.GetTypedHeaders().Referer.ToString();
-            await _authenticationService.RegisterAsync(data, callbackUrl);
+            await _authenticationService.RegisterAsync(data);
             return Ok();
         }
 

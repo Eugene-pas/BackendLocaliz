@@ -1,7 +1,4 @@
-﻿using System.Net;
-using System.Text.RegularExpressions;
-using System.Text;
-using AutoMapper;
+﻿using AutoMapper;
 using Core.DTO.DocumentDTO;
 using Core.Entities.ContentEntity;
 using Core.Entities.DocumentEntity;
@@ -13,6 +10,9 @@ using Core.Interfaces.CustomService;
 using Core.Specifications;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using System.Net;
+using System.Text;
+using System.Text.RegularExpressions;
 
 
 namespace Core.Services;
@@ -126,7 +126,27 @@ public class DocumentService : IDocumentService
         var documents = await _documentRepository.ListAsync(
             new DocumentSpecification.GetDocumentByProjectId(projectId));
 
-        return _mapper.Map<List<DocumentDTO>>(documents);
+        List<DocumentDTO> documentDto = new List<DocumentDTO>();
+
+        foreach (var item in documents)
+        {
+            documentDto.Add(_mapper.Map<DocumentDTO>(item));
+
+            var totalCount = await _contentRepository.CountAsync(new ContentSpecification.GetByDocumentId(item.Id));
+            if (totalCount == 0)
+            { 
+                documentDto[documentDto.Count - 1].TranslationProgress = 0;
+            }
+            else
+            { 
+                var translationCount = await _contentRepository.CountAsync(new ContentSpecification.GetCountNotTranslateByDocumentId(item.Id));
+                var translationProgress = translationCount * 100 / totalCount;
+
+                documentDto[documentDto.Count - 1].TranslationProgress = translationProgress;
+            }
+        }
+
+        return documentDto;
     }
 
     public async Task<DownloadDTO> DownloadTranslate(uint documentId)
@@ -164,7 +184,7 @@ public class DocumentService : IDocumentService
         };
     }
 
-    private string TransformByteToStaring(byte[] data)
+    private string TransformByteToStaring(in byte[] data)
     {
         return Encoding.UTF8.GetString(data);
     }
